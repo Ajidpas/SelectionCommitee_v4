@@ -59,6 +59,7 @@ public class ConsumerThread extends Thread {
      */
     @Override
     public void run() {
+        int inc = 0;
         Consumer activeConsumer = Consumer.MATH_CONSUMER;
         whilePoint:
         while ((queue.getSize() > 0) || (mathProducer.isAlive()) || (bioProducer.isAlive())) {
@@ -70,33 +71,21 @@ public class ConsumerThread extends Thread {
                 case MATH_CONSUMER:
                     if (newApplicant.getSpecialisation().equals(Specialisation.MATHEMATICIAN)) {
                         mathConsumer.put(newApplicant);
-                    } else {
-                        bioConsumer.put(newApplicant);
-                        activeConsumer = Consumer.BIO_CONSUMER;
+                        break;
                     }
-                    break;
+                    activeConsumer = Consumer.BIO_CONSUMER;
                 case BIO_CONSUMER:
                     if (newApplicant.getSpecialisation().equals(Specialisation.BIOLOGIST)) {
                         bioConsumer.put(newApplicant);
-                    } else {
-                        allConsumer.put(newApplicant);
-                        System.out.println(newApplicant.getSpecialisation());
-                        activeConsumer = Consumer.ALL_CONSUMER;
+                        break;
                     }
-                    break;
+                    activeConsumer = Consumer.ALL_CONSUMER;
                 case ALL_CONSUMER:
                     allConsumer.put(newApplicant);
-                    System.out.println(newApplicant.getSpecialisation());
-                    for (int i = 0; i < 3; i++) {
-                        newApplicant = queue.pop();
-                        if (newApplicant != null) {
-                            allConsumer.put(newApplicant);
-                            System.out.println(newApplicant.getSpecialisation());
-                        }
+                    if ((++inc) >= 5) {
+                        inc = 0;
+                        activeConsumer = Consumer.MATH_CONSUMER;
                     }
-                    System.out.println("---------------------");
-                    activeConsumer = Consumer.MATH_CONSUMER;
-                    break;
             }
         }
         System.out.println("Math consumer students:");
