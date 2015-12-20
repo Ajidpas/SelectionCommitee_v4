@@ -27,7 +27,7 @@ public class BioProducer extends Producer {
      */
     @Override
     public void run() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 200; i++) {
             Applicant newApplicant = new Applicant(i + 10, 180, 35, 5, 200, 200, Applicant.Specialisation.BIOLOGIST);
             queue.put(newApplicant);
         }

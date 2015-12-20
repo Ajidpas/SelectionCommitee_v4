@@ -53,9 +53,9 @@ public class ApplicantQueue {
     
     /**
      * Return and remove (if it is need) applicant from the queue
-     * @param consumer next consumer in the queue of consumers
+     * @return new applicant
      */
-    public synchronized void pop(Consumer consumer) {
+    public synchronized Applicant pop() {
         while ((applicants.size() <= MIN_CAPACITY) && (mathProducer.isAlive() || bioProducer.isAlive())) {
             try {
                 this.wait();
@@ -63,27 +63,14 @@ public class ApplicantQueue {
                 System.out.println("Interrupted exception was occured: " + e.getMessage());
             }
         }
+        Applicant newApplicant;
         if (applicants.size() > 0) {
-            switch (consumer) {
-                case MATH_CONSUMER:
-                    if (applicants.peek().getSpecialisation().equals(Specialisation.MATHEMATICIAN)) {
-                        Applicant newApplicant = applicants.poll();
-                        consumer.put(newApplicant);
-                    }
-                    break;
-                case BIO_CONSUMER:
-                    if (applicants.peek().getSpecialisation().equals(Specialisation.BIOLOGIST)) {
-                        Applicant newApplicant = applicants.poll();
-                        consumer.put(newApplicant);
-                    }
-                    break;
-                case ALL_CONSUMER:
-                    Applicant newApplicant = applicants.poll();
-                    consumer.put(newApplicant);
-                    break;
-            }
+            newApplicant = applicants.poll();
+        } else {
+            newApplicant = null;
         }
         this.notifyAll();
+        return newApplicant;
     }
     
     /**

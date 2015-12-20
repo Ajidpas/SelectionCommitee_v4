@@ -5,6 +5,8 @@
  */
 package consumers;
 
+import applicantqueue.Applicant;
+import applicantqueue.Applicant.Specialisation;
 import applicantqueue.ApplicantQueue;
 import producers.Producer;
 
@@ -60,21 +62,39 @@ public class ConsumerThread extends Thread {
         Consumer activeConsumer = Consumer.MATH_CONSUMER;
         whilePoint:
         while ((queue.getSize() > 0) || (mathProducer.isAlive()) || (bioProducer.isAlive())) {
+            Applicant newApplicant = queue.pop();
+            if (newApplicant == null) {
+                continue;
+            }
             switch (activeConsumer) {
                 case MATH_CONSUMER:
-                    queue.pop(mathConsumer);
-                    activeConsumer = Consumer.BIO_CONSUMER;
+                    if (newApplicant.getSpecialisation().equals(Specialisation.MATHEMATICIAN)) {
+                        mathConsumer.put(newApplicant);
+                    } else {
+                        bioConsumer.put(newApplicant);
+                        activeConsumer = Consumer.BIO_CONSUMER;
+                    }
                     break;
                 case BIO_CONSUMER:
-                    queue.pop(bioConsumer);
-                    activeConsumer = Consumer.ALL_CONSUMER;
+                    if (newApplicant.getSpecialisation().equals(Specialisation.BIOLOGIST)) {
+                        bioConsumer.put(newApplicant);
+                    } else {
+                        allConsumer.put(newApplicant);
+                        System.out.println(newApplicant.getSpecialisation());
+                        activeConsumer = Consumer.ALL_CONSUMER;
+                    }
                     break;
                 case ALL_CONSUMER:
-                    int queueSize = queue.getSize();
-                    int increment = queueSize > 5 ? 5 : queueSize;
-                    for (int i = 0; i < increment; i++) {
-                        queue.pop(allConsumer);
+                    allConsumer.put(newApplicant);
+                    System.out.println(newApplicant.getSpecialisation());
+                    for (int i = 0; i < 3; i++) {
+                        newApplicant = queue.pop();
+                        if (newApplicant != null) {
+                            allConsumer.put(newApplicant);
+                            System.out.println(newApplicant.getSpecialisation());
+                        }
                     }
+                    System.out.println("---------------------");
                     activeConsumer = Consumer.MATH_CONSUMER;
                     break;
             }

@@ -28,7 +28,7 @@ public class MathProducer extends Producer {
      */
     @Override
     public void run() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 250; i++) {
             Applicant newApplicant = new Applicant(i + 100, 180, 200, 200, 35, 5, Specialisation.MATHEMATICIAN);
             queue.put(newApplicant);
         }
