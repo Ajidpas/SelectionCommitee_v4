@@ -55,7 +55,7 @@ public class ConsumerThread extends Thread {
     }
     
     /**
-     * Rn method
+     * Run method
      */
     @Override
     public void run() {
