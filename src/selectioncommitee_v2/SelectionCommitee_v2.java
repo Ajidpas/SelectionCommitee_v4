@@ -13,7 +13,7 @@ import producers.MathProducer;
 import producers.Producer;
 
 /**
- *
+ * Selection commitee
  * @author Sasha
  */
 public class SelectionCommitee_v2 {
